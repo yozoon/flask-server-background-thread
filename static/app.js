@@ -12,7 +12,7 @@ $(document).ready(function() {
     + ':' + location.port + namespace);
 
   socket.on('connect', function() {
-    $('#status').text('Status: Connected');
+    $('#status').text('Connected');
   });
 
   socket.on('log', function(msg) {
@@ -62,7 +62,7 @@ $(document).ready(function() {
 
     $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10
         + " ");
-    $('#status').text('Status: Connected');
+    $('#status').text('Connected');
     if(latency_display_timer != null) {
       clearTimeout(latency_display_timer);
     }
@@ -71,6 +71,6 @@ $(document).ready(function() {
 
   function display_latency_timeout() {
     $('#ping-pong').text('-- ');
-    $('#status').text('Status: Disconnected');
+    $('#status').text('Disconnected');
   }
 });
