@@ -32,12 +32,10 @@ $(document).ready(function() {
 
   // Button handler
   $("#start-button").click(function() {
-    console.log('start');
-    socket.emit('action','start');
+    socket.emit('start');
   });
   $("#stop-button").click(function() {
-    console.log('start');
-    socket.emit('action','stop');
+    socket.emit('stop');
   });
 
   // Interval function that tests message latency by sending a "ping"

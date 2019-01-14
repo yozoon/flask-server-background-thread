@@ -48,38 +48,31 @@ def init_job():
 def index():
     return render_template('index.html', async_mode=socketio.async_mode)
 
-@socketio.on('action', namespace=namespace)
-def start(action):
+@socketio.on('start', namespace=namespace)
+def start():
     global thread
     global running
-    if action.lower() == 'start':
-        if not thread == None:
-            if thread.is_alive():
-                socketio.emit('message', 'Thread is active', namespace=namespace)
-                return
-        thread = Thread(target = worker_task)
-        thread.daemon = True
-        running = True
-        socketio.emit('message', 'Thread created', namespace=namespace)
-        thread.start()
-        return
-    elif action.lower() == 'stop':
-        running = False
-        if not thread == None:
-            if thread.is_alive():
-                print('Told the thread to stop')
-                socketio.emit('message', 'Told the thread to stop', namespace=namespace)
-                return    
-        socketio.emit('message', 'Thread is not running', namespace=namespace)
-        return
+    if not thread == None:
+        if thread.is_alive():
+            socketio.emit('message', 'Thread is active', namespace=namespace)
+            return
+    thread = Thread(target = worker_task)
+    thread.daemon = True
+    running = True
+    socketio.emit('message', 'Thread created', namespace=namespace)
+    thread.start()
 
 @socketio.on('stop', namespace=namespace)
 def stop():
     global thread
     global running
     running = False
-    print("Told the thread to stop")
-    socketio.emit('message', "Told the thread to stop", namespace=namespace)
+    if not thread == None:
+        if thread.is_alive():
+            print('Told the thread to stop')
+            socketio.emit('message', 'Told the thread to stop', namespace=namespace)
+            return    
+    socketio.emit('message', 'Thread is not running', namespace=namespace)
 
 # This function is called when a web browser connects
 @socketio.on('connect', namespace=namespace)
@@ -87,7 +80,6 @@ def connect():
     global qtask
     if qtask == None:
         qtask = socketio.start_background_task(queue_task)
-    
     print('Client connected', request.sid)
     emit('connect')
 
